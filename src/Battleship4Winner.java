@@ -5,38 +5,12 @@ public class Battleship4Winner {
         Scanner sc = new Scanner(System.in);
         int R = sc.nextInt();
         int C = sc.nextInt();
-        int[][] ships = new int[R][C];
+        int[][] map = new int[R][C];
         int nShip = 0;
-        for (int r = 0; r < R; r++) {
-            for (int c = 0; c < C; c++) {
-                ships[r][c] = sc.nextInt();
-                nShip += ships[r][c];
-            }
-        }
-        int end = -1;
-        int first = -1;
-
-        int K = sc.nextInt();
-        int out = 0;
-        int[][] shots = new int[R][C];
-        for (int k = 0; k < K; k++) {
-            int r = sc.nextInt() - 1;
-            int c = sc.nextInt() - 1;
-            boolean isValidR = (0 <= r) && (r < R);
-            boolean isValidC = (0 <= c) && (c < C);
-            if (!isValidR || !isValidC) {
-                out++;
-            } else {
-                shots[r][c]++;
-                if (ships[r][c] == 1) {
-                    nShip--;
-                    end = k;
-                    ships[r][c] = 2;
-
-                    if (first == -1) {
-                        first = k;
-                    }
-                }
+        for (int r = 0; r < R; ++r) {
+            for (int c = 0; c < C; ++c) {
+                map[r][c] = sc.nextInt();
+                nShip += map[r][c];
             }
         }
 
@@ -44,26 +18,52 @@ public class Battleship4Winner {
         int firstMiss = 0;
         int repeatHit = 0;
         int repeatMiss = 0;
-        for (int r = 0; r < R; r++) {
-            for (int c = 0; c < C; c++) {
-                // firstHit
-                if (ships[r][c] > 0 && shots[r][c] > 0) {
-                    firstHit++;
+        int out = 0;
+
+        int firstHitIdx = -1;
+        int lastHitIdx = -1;
+
+        int K = sc.nextInt();
+        for (int k = 1; k <= K; ++k) {
+            int r = sc.nextInt() - 1;
+            int c = sc.nextInt() - 1;
+
+            boolean isValidR = (0 <= r && r < R);
+            boolean isValidC = (0 <= c && c < C);
+
+            // out
+            if (!isValidR || !isValidC) {
+                out++;
+            }
+            // firstHit
+            else if (map[r][c] == 1) {
+                firstHit++;
+                nShip--;
+                map[r][c] = 2;
+
+                if (firstHitIdx == -1) {
+                    firstHitIdx = k;
                 }
-                // firstMiss
-                if (ships[r][c] == 0 && shots[r][c] > 0) {
-                    firstMiss++;
-                }
-                // repeatHit
-                if (ships[r][c] > 0 && shots[r][c] > 1) {
-                    repeatHit += shots[r][c] - 1;
-                }
-                // repeatMiss
-                if (ships[r][c] == 0 && shots[r][c] > 1) {
-                    repeatMiss += shots[r][c] - 1;
+
+                if (nShip == 0) {
+                    lastHitIdx = k;
                 }
             }
+            // firstMiss
+            else if (map[r][c] == 0) {
+                firstMiss++;
+                map[r][c] = -1;
+            }
+            // repeatHit
+            else if (map[r][c] == 2) {
+                repeatHit++;
+            }
+            // repeatMiss
+            else if (map[r][c] == -1) {
+                repeatMiss++;
+            }
         }
+    
         System.out.println(firstHit);
         System.out.println(firstMiss);
         System.out.println(repeatHit);
@@ -71,9 +71,19 @@ public class Battleship4Winner {
         System.out.println(out);
 
         if (nShip > 0) {
-            System.out.println("battleship " + (first + 1));
+            System.out.println("battleship " + firstHitIdx);
         } else {
-            System.out.println("attacker " + (end + 1));
+            System.out.println("attacker " + lastHitIdx);
         }
     }
 }
+/*
+-1 = น้ำที่ถูกยิงไปแล้ว
+0 = น้ำ
+1 = เรือ
+2 = เรือที่ถูกยิงไปแล้ว
+
+0 1 1 0 
+1 0 0 0 
+0 1 0 1
+*/
