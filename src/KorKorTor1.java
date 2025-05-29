@@ -67,13 +67,14 @@ public class KorKorTor1 {
             parties[i] = new Party1(names[i], nMembers[i], sc);
         }
         Scanner scan = sc;
+        Party1[] party = parties;
 
         // code from PDF *** do not edit ***
         final int K = sc.nextInt();
         for (int i = 0; i < K; ++i) {
             int partyNumber = scan.nextInt();
             int regionNumber = scan.nextInt();
-            parties[partyNumber].printInfo(regionNumber);
+            party[partyNumber].printInfo(regionNumber);
         }
     }
 }
